@@ -1,7 +1,7 @@
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   return (
-    <footer className="bg-[#0C0B27] py-8 text-center text-white">
+    <footer className=" py-8 text-center text-white">
       {/* Logo dan Navigation */}
       <div className="flex justify-between items-center container mx-auto px-6 border-b border-gray-700 pb-4">
         <div className="flex items-center space-x-2">
