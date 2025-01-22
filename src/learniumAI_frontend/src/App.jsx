@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { learniumAI_backend } from 'declarations/learniumAI_backend';
+import { useState } from "react";
+import { learniumAI_backend } from "declarations/learniumAI_backend";
 
 function App() {
-  const [greeting, setGreeting] = useState('');
+  const [greeting, setGreeting] = useState("");
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -19,7 +19,7 @@ function App() {
       <br />
       <br />
       <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
+        <label htmlFor="name">Enter your: &nbsp;</label>
         <input id="name" alt="Name" type="text" />
         <button type="submit">Click Me!</button>
       </form>
