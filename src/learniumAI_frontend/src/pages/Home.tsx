@@ -1,9 +1,9 @@
 import Footer from "../components/Footer";
-import BenefitsSection from "../components/landingPage/benefitsSection/BenefitsSection";
-import CallToActionSection from "../components/landingPage/CallToActionSection";
-import FeaturesSection from "../components/landingPage/featuresSection/FeaturesSection";
-import HeroSection from "../components/landingPage/HeroSection";
-import Navbar from "../components/landingPage/Navbar";
+import BenefitsSection from "../components/home/benefitsSection/BenefitsSection";
+import CallToActionSection from "../components/home/CallToActionSection";
+import FeaturesSection from "../components/home/featuresSection/FeaturesSection";
+import HeroSection from "../components/home/HeroSection";
+import Navbar from "../components/home/Navbar";
 
 const Home = () => {
   return (
