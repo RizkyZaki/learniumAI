@@ -2,27 +2,34 @@ interface BenefitCardProps {
   icon: string;
   title: string;
   description: string;
-  gradient: string;
 }
 
 export default function BenefitCard({
   icon,
   title,
   description,
-  gradient,
 }: BenefitCardProps) {
   return (
-    <div className="relative bg-gray-900 border border-gray-700 rounded-lg p-6 w-[300px] text-left">
-      {/* Tab with Gradient */}
-      <div
-        className={`absolute -top-4 left-6 px-4 py-1 text-white text-sm font-semibold rounded-t-lg bg-gradient-to-r ${gradient}`}
-      >
+    <div
+      className="relative bg-cover bg-no-repeat text-center p-8 rounded-xl"
+      style={{
+        backgroundImage: `url(/assets/images/card.png)`,
+        width: "373px", // Dimensi lebar default
+        height: "500px", // Dimensi tinggi default
+      }}
+    >
+      {/* Tab Judul */}
+      <div className="absolute left-64 top-2 transform -translate-x-1/2 px-6 py-2 text-white text-2xl font-semibold bg-transparent">
         {title}
       </div>
-      {/* Icon */}
-      <img src={icon} alt={title} width={64} height={64} className="mb-4" />
-      {/* Description */}
-      <p className="text-gray-400">{description}</p>
+
+      {/* Ikon */}
+      <img src={icon} alt={title} className="mx-auto mt-24 w-30 h-30" />
+
+      {/* Deskripsi */}
+      <p className="text-gray-300 mt-20 text-sm leading-relaxed">
+        {description}
+      </p>
     </div>
   );
 }
