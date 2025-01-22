@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "learniumAI_backend": {
+      "main": "src/learniumAI_backend/main.mo",
+      "type": "motoko"
+    },
+    "learniumAI_frontend": {
+      "dependencies": [
+        "learniumAI_backend"
+      ],
+      "source": [
+        "src/learniumAI_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "learniumAI_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
