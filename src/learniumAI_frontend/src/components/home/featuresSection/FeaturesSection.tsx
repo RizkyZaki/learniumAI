@@ -4,7 +4,7 @@ export default function FeaturesSection() {
   return (
     <section
       id="how-it-works"
-      className="py-20 text-center bg-[#0C0B27] text-white"
+      className="py-20 px-2 text-center bg-[#0C0B27] text-white"
     >
       <div className="mb-12">
         {/* How This Works Styled Box */}
@@ -38,14 +38,14 @@ export default function FeaturesSection() {
           description="Seret dan lepas file Anda, biarkan kami membantu menyederhanakan materi"
         />
 
-        {/* arrow icon */}
+        {/* arrow icon
         <div className="hidden lg:flex items-center">
           <img
             src="/assets/logo/arrow-1.png"
             alt="Arrow Icon"
             className="w-10 h-10"
           />
-        </div>
+        </div> */}
 
         <FeatureItem
           icon="/assets/images/ringkasan.png"
@@ -53,14 +53,14 @@ export default function FeaturesSection() {
           description="Dalam sekejap file Anda diringkas menjadi bagian yang terstruktur"
         />
 
-        {/* arrow icon */}
+        {/* arrow icon
         <div className="hidden lg:flex items-center">
           <img
             src="/assets/logo/arrow-1.png"
             alt="Arrow Icon"
             className="w-10 h-10"
           />
-        </div>
+        </div> */}
 
         <FeatureItem
           icon="/assets/images/quiz.png"
