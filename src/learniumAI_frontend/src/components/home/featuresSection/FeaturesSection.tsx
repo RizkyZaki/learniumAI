@@ -2,10 +2,13 @@ import FeatureItem from "./FeatureItem";
 
 export default function FeaturesSection() {
   return (
-    <section id="how-it-works" className="py-20  text-center text-white">
+    <section
+      id="how-it-works"
+      className="py-20 text-center bg-[#0C0B27] text-white"
+    >
       <div className="mb-12">
         {/* How This Works Styled Box */}
-        <div className="inline-flex items-center space-x-2 px-4 py-2 border-2 rounded-full text-sm font-semibold bg-transparent border-gradient-to-r from-pink-500 to-purple-500 text-white">
+        <div className="inline-flex items-center space-x-2 px-4 py-2 border-2 rounded-xl mb-4 text-sm font-semibold bg-transparent border-gradient-to-r from-pink-500 to-purple-500 text-white">
           <img
             src="/assets/logo/how-it-works.png"
             alt="How This Works Icon"
@@ -15,8 +18,12 @@ export default function FeaturesSection() {
         </div>
 
         {/* Title and Description */}
-        <h2 className="text-4xl font-bold mt-4">
-          Bagaimana <span className="text-purple-500">Learnium</span> Bekerja?
+        <h2 className="text-4xl font-bold mt-7">
+          Bagaimana{" "}
+          <span className="bg-gradient-to-r from-[#FB928E] to-[#6F41FF] bg-clip-text text-transparent">
+            Learnium
+          </span>{" "}
+          Bekerja?
         </h2>
         <p className="mt-4 text-gray-400">
           Lihat bagaimana kami meningkatkan efisiensi belajar Anda
@@ -24,7 +31,7 @@ export default function FeaturesSection() {
       </div>
 
       {/* Features List */}
-      <div className="flex justify-center items-center gap-8">
+      <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-16">
         <FeatureItem
           icon="/assets/images/unggah-document.png"
           title="Unggah Dokumen"
@@ -32,12 +39,11 @@ export default function FeaturesSection() {
         />
 
         {/* arrow icon */}
-        <div className="flex items-center">
+        <div className="hidden lg:flex items-center">
           <img
             src="/assets/logo/arrow-1.png"
             alt="Arrow Icon"
-            width={50}
-            height={50}
+            className="w-10 h-10"
           />
         </div>
 
@@ -48,14 +54,14 @@ export default function FeaturesSection() {
         />
 
         {/* arrow icon */}
-        <div className="flex items-center">
+        <div className="hidden lg:flex items-center">
           <img
             src="/assets/logo/arrow-1.png"
             alt="Arrow Icon"
-            width={50}
-            height={50}
+            className="w-10 h-10"
           />
         </div>
+
         <FeatureItem
           icon="/assets/images/quiz.png"
           title="Uji Diri dengan Kuis"
