@@ -2,6 +2,34 @@
 
 # `learniumAI`
 
+LearniumAI is a web-based platform that revolutionizes the learning experience by transforming educational materials into structured modules and interactive quizzes. By leveraging cutting-edge Web3 technology, LearniumAI ensures a more efficient, decentralized, and enjoyable learning process for users.
+
+## 📺 Resumid Demo
+Demo Video: [Youtube]()
+
+---
+
+## 🧑‍💻 Team
+
+| **Name** | **Role** |
+|---|---|
+| Muhammad Karov Ardava Barus | Lead, AI Engineer |
+| Casta Garneta | UI/UX Designer |
+| Rizky Zaki Zulkarnaen | Backend Developer |
+| Hauzan Rafi Attallah | Frontend Developer |
+| William Eka Chandra | AI Engineer |
+
+---
+
+## 🚀 Features
+
+- **Internet Identity Authentication:** provides personalized access to users keeping their data private and secure using Internet Identity.
+- **Interactive Learning Modules:** Convert raw educational content into structured and interactive modules for an engaging learning experience.
+- **AI-Powered Quiz Generator:** Automatically generate quizzes based on the learning materials to reinforce understanding.
+- **Progress Tracking:** Monitor learning progress through detailed insights and analytics.
+- **Customization:** Personalize learning paths and content to meet individual needs.
+
+---
 
 Welcome to your new `learniumAI` project and to the Internet Computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
 
