@@ -7,7 +7,7 @@ import Navbar from "../components/home/Navbar";
 
 const Home = () => {
   return (
-    <div className="bg-primary-backgorund text-white font-sans relative">
+    <div className="bg-primary-backgorund text-white relative">
       {/* Content */}
       <div className="relative z-10">
         <Navbar />

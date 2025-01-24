@@ -32,7 +32,7 @@ const config: Config = {
         gradientEnd: "#0C0B27",
       },
       fontFamily: {
-        sans: ["var(--font-plus-jakarta-sans)", "sans-serif"],
+        sans: ['"Plus Jakarta Sans"', "sans-serif"],
       },
     },
   },
