@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,13 +37,14 @@ export default function Navbar() {
 
         {/* User Info */}
         <div className="flex items-center space-x-2">
-          <span className="text-white">John Doe</span>
-          <img
-            src="/assets/logo/icon-user.png"
-            alt="User Icon"
-            width={32}
-            height={32}
-          />
+          <a onClick={logout}>
+            <img
+              src="/assets/logo/icon-user.png"
+              alt="User Icon"
+              width={32}
+              height={32}
+            />
+          </a>
         </div>
       </div>
     </nav>

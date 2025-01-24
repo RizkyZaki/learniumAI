@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isAuthenticated, login, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,9 +53,23 @@ export default function Navbar() {
 
         {/* Sign In and Sign Up Buttons */}
         <div className="flex items-center space-x-4">
-          <button className="bg-gradient-to-r from-[#FB928E] to-[#6F41FF] text-white px-4 py-2 rounded-full shadow-md hover:opacity-90">
-            Sign up
-          </button>
+          {isAuthenticated ? (
+            <div>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-full shadow-md hover:opacity-90"
+                onClick={logout}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              className="bg-gradient-to-r from-[#FB928E] to-[#6F41FF] text-white px-4 py-2 rounded-full shadow-md hover:opacity-90"
+              onClick={login}
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
     </nav>
