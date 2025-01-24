@@ -24,7 +24,7 @@ export default function Navbar() {
           : "bg-[#0C0B27]"
       }`}
     >
-      <div className="container mx-auto flex justify-between items-center py-4 px-6">
+      <div className="container mx-auto flex justify-between items-center py-6 px-36">
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <a href="#home">
