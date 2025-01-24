@@ -3,8 +3,10 @@ import RecentChapters from "../components/dashboard/RecentChapters";
 import UploadSection from "../components/dashboard/uploadSection/UploadSection";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
+  const { principal } = useAuth();
   const [chapters, setChapters] = useState([
     { name: "Contoh Materi 1.pdf", size: "5.3MB" },
     { name: "Contoh Materi 2.pdf", size: "5.3MB" },
@@ -25,7 +27,8 @@ const Dashboard = () => {
         <div className="mb-14 mt-32">
           {/* Header dengan gradasi warna */}
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#FB928E] to-[#6F41FF] bg-clip-text text-transparent relative inline-block">
-            Selamat datang, John! <span className="text-[#FB928E]">👋</span>
+            Welcome, Your Principal ID {principal}!{" "}
+            <span className="text-[#FB928E]">👋</span>
             {/* Garis di bawah teks */}
             <img
               src="/assets/logo/line.png"
