@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SummaryList from "../components/summaryQuiz/summarySection/SummaryList";
+import FlashcardList from "../components/summaryQuiz/flashcard/FlashcardList";
 
 const SummaryQuiz: React.FC = () => {
   return (
@@ -18,6 +19,9 @@ const SummaryQuiz: React.FC = () => {
               siap untuk dipelajari
             </p>
             <SummaryList />
+          </div>
+          <div className="col-span-2">
+            <FlashcardList />
           </div>
         </div>
       </div>
