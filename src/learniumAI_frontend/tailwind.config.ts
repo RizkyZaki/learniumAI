@@ -25,7 +25,7 @@ const config: Config = {
           "dark-hover": "#432799",
           "dark-active": "#321D73",
           darker: "#271759",
-          backgorund: "#0C0B27",
+          background: "#0C0B27",
         },
         gradientStart: "#2D0066",
         gradientMiddle: "#140B44",

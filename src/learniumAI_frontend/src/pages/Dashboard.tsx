@@ -21,7 +21,7 @@ const Dashboard = () => {
     );
   };
   return (
-    <div className="bg-primary-backgorund min-h-screen text-basic-white">
+    <div className="bg-primary-background min-h-screen text-basic-white">
       <Navbar />
       <main className="max-w-7xl mx-auto px-7 py-8">
         <div className="mb-14 mt-32">
