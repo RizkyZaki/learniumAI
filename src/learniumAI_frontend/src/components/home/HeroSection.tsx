@@ -31,7 +31,7 @@ export default function HeroSection() {
           className="absolute -top-[150px] w-100 object-cover z-0"
         />
         <img
-          src="/assets/images/Ilustration.png"
+          src="/assets/images/ilustration.png"
           alt="Hero Illustration"
           className="relative w-72 md:w-96 lg:w-[500px] xl:w-[600px] z-10"
         />
