@@ -21,7 +21,6 @@ const UploadSection = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [extractedContent, setExtractedContent] = useState<string | null>(null);
 
-  
   const handleFileUpload = async (files: File[]) => {
     const file = files[0];
     const newFile = {
@@ -67,20 +66,39 @@ const UploadSection = () => {
   // Fungsi ekstraksi teks dari PDF menggunakan pdfjs-dist
   const extractTextFromPDF = async (file: File): Promise<string> => {
     const reader = new FileReader();
-    return new Promise((resolve) => {
-      reader.onload = async (event) => {
-        const typedArray = new Uint8Array(event.target?.result as ArrayBuffer);
-        const pdf = await pdfjs.getDocument({ data: typedArray }).promise;
 
-        let extractedText = "";
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const textContent = await page.getTextContent();
-          extractedText +=
-            textContent.items.map((item) => (item as any).str).join(" ") + "\n";
+    return new Promise((resolve, reject) => {
+      reader.onload = async (event) => {
+        try {
+          const typedArray = new Uint8Array(
+            event.target?.result as ArrayBuffer
+          );
+          console.log("PDF Loaded, Extracting Text...");
+
+          const pdf = await pdfjs.getDocument({ data: typedArray }).promise;
+          console.log(`PDF memiliki ${pdf.numPages} halaman.`);
+
+          let extractedText = "";
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+
+            const pageText = textContent.items
+              .map((item) => (item as any).str)
+              .join(" ");
+            console.log(`Halaman ${i} Ekstrak:`, pageText);
+
+            extractedText += pageText + "\n";
+          }
+
+          console.log("Final Extracted Text:", extractedText);
+          resolve(extractedText);
+        } catch (error) {
+          console.error("Error extracting text from PDF:", error);
+          reject(error);
         }
-        resolve(extractedText);
       };
+
       reader.readAsArrayBuffer(file);
     });
   };

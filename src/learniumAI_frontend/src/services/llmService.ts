@@ -5,6 +5,10 @@ import notesPrompt from "../prompts/notes_prompt.txt?raw";
 import flashcardsPrompt from "../prompts/flashcards_prompt.txt?raw";
 import quizPrompt from "../prompts/quiz_prompt.txt?raw";
 
+console.log("Notes Prompt:", notesPrompt);
+console.log("Flashcards Prompt:", flashcardsPrompt);
+console.log("Quiz Prompt:", quizPrompt);
+
 // Initialize Hugging Face client
 
 // Cek apakah token tersedia dan pastikan bertipe string
@@ -19,6 +23,8 @@ if (!HF_ACCESS_TOKEN) {
 
 // Pastikan parameter adalah string
 const client = new HfInference(HF_ACCESS_TOKEN);
+
+console.log("Hugging Face Token:", HF_ACCESS_TOKEN);
 
 // Function to generate educational content
 export async function generateEducationalContent(content: string): Promise<{
@@ -41,6 +47,7 @@ export async function generateEducationalContent(content: string): Promise<{
     });
 
     const notesMd: string = notesResponse.choices[0]?.message?.content ?? "";
+    console.log("Notes MD:", notesMd);
     if (!notesMd) throw new Error("Gagal mendapatkan catatan dari LLM.");
 
     // 2. Generate Flashcards
