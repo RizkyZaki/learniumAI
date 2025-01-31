@@ -6,7 +6,19 @@ import flashcardsPrompt from "../prompts/flashcards_prompt.txt?raw";
 import quizPrompt from "../prompts/quiz_prompt.txt?raw";
 
 // Initialize Hugging Face client
-const client = new HfInference("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"); // Ganti dengan token Anda
+
+// Cek apakah token tersedia dan pastikan bertipe string
+const HF_ACCESS_TOKEN: string | undefined = import.meta.env
+  .VITE_HF_ACCESS_TOKEN;
+
+if (!HF_ACCESS_TOKEN) {
+  throw new Error(
+    "Hugging Face API Token tidak ditemukan! Pastikan sudah diset di .env."
+  );
+}
+
+// Pastikan parameter adalah string
+const client = new HfInference(HF_ACCESS_TOKEN);
 
 // Function to generate educational content
 export async function generateEducationalContent(content: string): Promise<{
