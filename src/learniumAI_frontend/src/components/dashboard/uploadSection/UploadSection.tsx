@@ -2,6 +2,12 @@ import { useState } from "react";
 import FileDropZone from "./FileDropZone";
 import UploadProgress from "./UploadProgress";
 import UploadedFileItem from "./UploadedFileItem";
+import { generateEducationalContent } from "../../../services/llmService";
+import * as pdfjs from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
+
+// Konfigurasi workerSrc untuk pdfjs-dist
+pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 interface UploadedFile {
   name: string;
@@ -12,12 +18,11 @@ interface UploadedFile {
 const UploadSection = () => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [uploadingFile, setUploadingFile] = useState<UploadedFile | null>(null);
-
   const [isUploading, setIsUploading] = useState(false);
+  const [extractedContent, setExtractedContent] = useState<string | null>(null);
 
-  const files = [{ name: "Contoh Materi 1.pdf", size: "5.3MB", progress: 100 }];
-
-  const handleFileUpload = (files: File[]) => {
+  
+  const handleFileUpload = async (files: File[]) => {
     const file = files[0];
     const newFile = {
       name: file.name,
@@ -26,6 +31,7 @@ const UploadSection = () => {
     };
 
     setUploadingFile(newFile);
+    setIsUploading(true);
 
     // Simulasi upload dengan progres
     const interval = setInterval(() => {
@@ -39,26 +45,52 @@ const UploadSection = () => {
             { ...newFile, progress: 100 },
           ]);
           setUploadingFile(null);
+          setIsUploading(false);
           return null;
         }
       });
     }, 500);
+
+    // Ekstrak teks dari PDF setelah selesai diunggah
+    const extractedText = await extractTextFromPDF(file);
+    setExtractedContent(extractedText);
+
+    // Kirim teks ke LLM untuk diproses
+    if (extractedText) {
+      const result = await generateEducationalContent(extractedText);
+      console.log("Ringkasan:", result.notes);
+      console.log("Flashcards:", result.flashcards);
+      console.log("Quiz:", result.quiz);
+    }
   };
 
-  const handleRemoveFile = (fileName: string) => {
-    setUploadedFiles((prevFiles) =>
-      prevFiles.filter((file) => file.name !== fileName)
-    );
+  // Fungsi ekstraksi teks dari PDF menggunakan pdfjs-dist
+  const extractTextFromPDF = async (file: File): Promise<string> => {
+    const reader = new FileReader();
+    return new Promise((resolve) => {
+      reader.onload = async (event) => {
+        const typedArray = new Uint8Array(event.target?.result as ArrayBuffer);
+        const pdf = await pdfjs.getDocument({ data: typedArray }).promise;
+
+        let extractedText = "";
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          extractedText +=
+            textContent.items.map((item) => (item as any).str).join(" ") + "\n";
+        }
+        resolve(extractedText);
+      };
+      reader.readAsArrayBuffer(file);
+    });
   };
 
   return (
-    <section className="rounded-lg  mb-32">
-      {/* Header */}
+    <section className="rounded-lg mb-32">
       <div className="mb-6">
         <h1 className="text-4xl font-semibold text-basic-white">Upload File</h1>
       </div>
 
-      {/* Upload Section */}
       <FileDropZone onFileUpload={handleFileUpload} />
       {uploadingFile && (
         <UploadProgress
@@ -67,18 +99,14 @@ const UploadSection = () => {
         />
       )}
 
-      {/* Note */}
-      <p className="text-gray-light mt-2 text-sm">
-        Format yang didukung: .jpg, .png, .svg, dan .zip
-      </p>
+      <p className="text-gray-light mt-2 text-sm">Format yang didukung: .pdf</p>
 
-      {/* Uploaded Files */}
       <div className="mt-4 space-y-2">
         {uploadedFiles.map((file) => (
           <UploadedFileItem
             key={file.name}
             file={file}
-            onRemove={handleRemoveFile}
+            onRemove={() => {}}
             isUploading={isUploading}
           />
         ))}

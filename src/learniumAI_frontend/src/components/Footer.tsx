@@ -4,6 +4,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   return (
     <footer className="py-8 text-white bg-[#0C0B27]">
+      
       {/* Container Utama */}
       <div className="container mx-auto px-6">
         {/* Logo dan Navigation */}
