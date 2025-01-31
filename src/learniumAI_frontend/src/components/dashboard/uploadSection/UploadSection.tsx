@@ -21,6 +21,7 @@ const UploadSection = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [extractedContent, setExtractedContent] = useState<string | null>(null);
 
+  
   const handleFileUpload = async (files: File[]) => {
     const file = files[0];
     const newFile = {
