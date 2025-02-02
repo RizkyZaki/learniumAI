@@ -1,20 +1,39 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface UploadedFileItemProps {
   file: {
     name: string;
     size: string;
     progress: number;
+    result?: {
+      flashcards: string[];
+    };
   };
   onRemove: (fileName: string) => void;
-  isUploading: boolean; // Status untuk menentukan apakah sedang upload
+  isUploading: boolean;
+  showResult: boolean;
+  isProcessing: boolean; // Status processing untuk tombol
 }
 
 const UploadedFileItem: React.FC<UploadedFileItemProps> = ({
   file,
   onRemove,
   isUploading,
+  showResult,
+  isProcessing,
 }) => {
+  const navigate = useNavigate();
+
+  const handleSeeResult = () => {
+    console.log("See Result", file.result);
+
+    if (file.result?.flashcards) {
+      navigate("/summary-quiz", {
+        state: { flashcards: file.result.flashcards },
+      });
+    }
+  };
   const getFileIcon = (fileName: string) => {
     const extension = fileName.split(".").pop()?.toLowerCase();
     switch (extension) {
@@ -38,9 +57,7 @@ const UploadedFileItem: React.FC<UploadedFileItemProps> = ({
 
   return (
     <div className="mb-6">
-      {/* Kontainer File */}
       <div className="bg-[#F1ECFF] rounded-lg p-4 shadow-sm flex justify-between items-center">
-        {/* Ikon dan Detail File */}
         <div className="flex items-center gap-3">
           <img
             src={getFileIcon(file.name)}
@@ -52,7 +69,6 @@ const UploadedFileItem: React.FC<UploadedFileItemProps> = ({
             <p className="text-gray-600 text-sm">{file.size}</p>
           </div>
         </div>
-        {/* Tombol Hapus */}
         <button
           className="text-gray-500 hover:text-red-500"
           onClick={() => onRemove(file.name)}
@@ -61,17 +77,22 @@ const UploadedFileItem: React.FC<UploadedFileItemProps> = ({
         </button>
       </div>
 
-      {/* Tombol Generate */}
+      {/* Tombol Generate Result */}
       <div className="mt-4 flex">
         <button
-          disabled={isUploading}
+          onClick={handleSeeResult}
+          disabled={isUploading || isProcessing}
           className={`py-2 px-6 rounded-md font-medium ${
-            isUploading
+            isUploading || isProcessing
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : "bg-gradient-to-r from-[#FB928E] to-[#6F41FF] text-white hover:opacity-90"
           }`}
         >
-          Generate
+          {isProcessing ? (
+            <div className="animate-spin border-4 border-t-4 border-white rounded-full w-5 h-5"></div>
+          ) : (
+            "See Result"
+          )}
         </button>
       </div>
     </div>

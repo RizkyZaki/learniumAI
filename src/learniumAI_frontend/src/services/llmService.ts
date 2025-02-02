@@ -12,8 +12,7 @@ console.log("Quiz Prompt:", quizPrompt);
 // Initialize Hugging Face client
 
 // Cek apakah token tersedia dan pastikan bertipe string
-const HF_ACCESS_TOKEN: string | undefined = import.meta.env
-  .VITE_HF_ACCESS_TOKEN;
+const HF_ACCESS_TOKEN: string | undefined = "hf_sjhdjahsdaehuasdhj";
 
 if (!HF_ACCESS_TOKEN) {
   throw new Error(
@@ -24,7 +23,7 @@ if (!HF_ACCESS_TOKEN) {
 // Pastikan parameter adalah string
 const client = new HfInference(HF_ACCESS_TOKEN);
 
-console.log("Hugging Face Token:", HF_ACCESS_TOKEN);
+// console.log("Hugging Face Token:", HF_ACCESS_TOKEN);
 
 // Function to generate educational content
 export async function generateEducationalContent(content: string): Promise<{

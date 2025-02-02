@@ -5,6 +5,8 @@ import UploadedFileItem from "./UploadedFileItem";
 import { generateEducationalContent } from "../../../services/llmService";
 import * as pdfjs from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Konfigurasi workerSrc untuk pdfjs-dist
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -13,14 +15,21 @@ interface UploadedFile {
   name: string;
   size: string;
   progress: number;
+  result?: {
+    notes: string;
+    flashcards: string[];
+    quiz: string[];
+  };
 }
 
 const UploadSection = () => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [uploadingFile, setUploadingFile] = useState<UploadedFile | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [extractedContent, setExtractedContent] = useState<string | null>(null);
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
   const handleFileUpload = async (files: File[]) => {
     const file = files[0];
     const newFile = {
@@ -56,10 +65,44 @@ const UploadSection = () => {
 
     // Kirim teks ke LLM untuk diproses
     if (extractedText) {
-      const result = await generateEducationalContent(extractedText);
-      console.log("Ringkasan:", result.notes);
-      console.log("Flashcards:", result.flashcards);
-      console.log("Quiz:", result.quiz);
+      try {
+        setIsProcessing(true); // Menetapkan status sebagai processing saat mulai
+        const formData = new FormData();
+        formData.append("content", extractedText);
+        formData.append("file", file);
+
+        const response = await axios.post(
+          "https://frisjjj.pythonanywhere.com/analyze",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          const result = response.data;
+          // Update state uploadedFiles dengan hasil
+          setUploadedFiles((prevFiles) =>
+            prevFiles.map((uploadedFile) =>
+              uploadedFile.name === newFile.name
+                ? { ...uploadedFile, result }
+                : uploadedFile
+            )
+          );
+          navigate("/summary-quiz", {
+            state: { flashcards: result.flashcards },
+          });
+        } else {
+          throw new Error("Gagal mendapatkan hasil");
+        }
+      } catch (error) {
+        console.error("Error posting to API:", error);
+        setErrorMessage("Terjadi kesalahan dalam proses analisis.");
+      } finally {
+        setIsProcessing(false); // Mengubah status menjadi false setelah selesai
+      }
     }
   };
 
@@ -126,6 +169,8 @@ const UploadSection = () => {
             file={file}
             onRemove={() => {}}
             isUploading={isUploading}
+            isProcessing={isProcessing}
+            showResult={file.result !== undefined} // Menambahkan kondisi showResult
           />
         ))}
       </div>
