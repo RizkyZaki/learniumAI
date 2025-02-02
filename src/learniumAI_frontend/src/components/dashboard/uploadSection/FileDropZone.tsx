@@ -8,12 +8,34 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({ onFileUpload }) => {
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
-    onFileUpload(files);
+
+    // Validasi hanya menerima PDF
+    const pdfFiles = files.filter((file) =>
+      file.name.toLowerCase().endsWith(".pdf")
+    );
+
+    if (pdfFiles.length === 0) {
+      alert("Only PDF files are allowed!");
+      return;
+    }
+
+    onFileUpload(pdfFiles);
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    onFileUpload(files);
+
+    // Validasi hanya menerima PDF
+    const pdfFiles = files.filter((file) =>
+      file.name.toLowerCase().endsWith(".pdf")
+    );
+
+    if (pdfFiles.length === 0) {
+      alert("Only PDF files are allowed!");
+      return;
+    }
+
+    onFileUpload(pdfFiles);
   };
 
   return (
@@ -46,6 +68,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({ onFileUpload }) => {
       {/* Tombol Browse Files */}
       <input
         type="file"
+        accept="application/pdf"
         onChange={handleFileInput}
         className="hidden"
         id="file-input"

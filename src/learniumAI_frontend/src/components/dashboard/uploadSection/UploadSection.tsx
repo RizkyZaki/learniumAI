@@ -33,6 +33,12 @@ const UploadSection = () => {
   const handleFileUpload = async (files: File[]) => {
     const file = files[0];
 
+    // Validasi hanya file PDF
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+      alert("Only PDF files are allowed!");
+      return;
+    }
+
     console.log("📂 File yang diunggah:", file);
 
     const newFile = {
