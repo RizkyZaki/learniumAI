@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import FlashcardSummary from "./FlashcardSummary";
 import FlashcardQuiz from "./FlashcardQuiz";
 import ProgressCard from "./ProgressCard";
+import ReactMarkdown from "react-markdown";
 
 interface FlashcardProps {
   type: "summary" | "quiz";
@@ -13,6 +14,23 @@ interface FlashcardProps {
 }
 
 const Flashcard: React.FC<FlashcardProps> = (props) => {
+  const [flashcardData, setFlashcardData] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Ambil data dari localStorage
+    const storedData = localStorage.getItem("summaryData");
+
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+
+      if (props.type === "summary") {
+        setFlashcardData(parsedData.flashcards);
+      } else if (props.type === "quiz") {
+        setFlashcardData(parsedData.quiz);
+      }
+    }
+  }, [props.type]);
+
   return (
     <div className="w-full">
       <div className="bg-[#2C2638] p-6 md:p-8 lg:p-10 rounded-2xl shadow-lg text-white">
@@ -24,7 +42,7 @@ const Flashcard: React.FC<FlashcardProps> = (props) => {
         {/* Flashcard Header */}
         <div className="relative bg-gradient-to-r from-[#D2C4FF] to-[#6F41FF] p-4 md:p-6 rounded-xl shadow-md flex items-center justify-between">
           <span className="text-primary-dark font-semibold text-sm md:text-lg">
-            Pengertian Waterfall Model?
+            {props.type === "summary" ? "Ringkasan Materi" : "Kuis"}
           </span>
         </div>
 
@@ -54,25 +72,10 @@ const Flashcard: React.FC<FlashcardProps> = (props) => {
 
         {/* Flashcard Content */}
         <div className="mt-6">
-          {props.type === "summary" &&
-          props.summaryTitle &&
-          props.summaryContent ? (
-            <FlashcardSummary
-              summaryTitle={props.summaryTitle}
-              summaryContent={props.summaryContent}
-            />
-          ) : props.type === "quiz" &&
-            props.question &&
-            props.options &&
-            props.correctAnswer ? (
-            <FlashcardQuiz
-              question={props.question}
-              options={props.options}
-              correctAnswer={props.correctAnswer}
-              onSelectAnswer={(isCorrect) =>
-                console.log(isCorrect ? "Benar!" : "Salah!")
-              }
-            />
+          {flashcardData ? (
+            <ReactMarkdown className="prose prose-invert">
+              {flashcardData}
+            </ReactMarkdown>
           ) : (
             <p className="text-gray-300">Data flashcard tidak tersedia.</p>
           )}
