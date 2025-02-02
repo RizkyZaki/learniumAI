@@ -95,14 +95,14 @@ const Flashcard: React.FC<FlashcardProps> = ({
         </div>
 
         {/* Progress di bagian bawah */}
-        <div className="mt-6 md:mt-8">
+        {/* <div className="mt-6 md:mt-8">
           <ProgressCard
             title="Progres Belajar"
             totalCards={5}
             totalQuestions={10}
             progress={50}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
