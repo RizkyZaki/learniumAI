@@ -3,85 +3,94 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SummaryList from "../components/summaryQuiz/summarySection/SummaryList";
 import Flashcard from "../components/summaryQuiz/flashcard/Flashcard";
-import ReactMarkdown from "react-markdown";
-import axios from "axios";
 
 const SummaryQuiz: React.FC = () => {
   const [summaryData, setSummaryData] = useState<{
-    notes: string;
-    flashcards: string;
-    quiz: string;
+    notes: Record<string, string>;
+    quiz: Record<string, string>;
   } | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+  const [viewType, setViewType] = useState<"summary" | "quiz">("summary");
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Cek apakah data sudah ada di localStorage
-        const cachedData = localStorage.getItem("summaryData");
-        if (cachedData) {
-          console.log("📌 Menggunakan data dari localStorage");
-          setSummaryData(JSON.parse(cachedData));
-          setLoading(false);
-          return;
-        }
-
-        console.log("📤 Mengambil data dari API...");
-        const response = await axios.get(
-          "https://frisjjj.pythonanywhere.com/analyze"
-        );
-
-        if (response.status === 200) {
-          console.log("✅ Data dari API:", response.data);
-          localStorage.setItem("summaryData", JSON.stringify(response.data));
-          setSummaryData(response.data);
-        } else {
-          throw new Error("Gagal mengambil data dari API.");
-        }
-      } catch (error) {
-        console.error("❌ Error Fetch Data:", error);
-        setError("Terjadi kesalahan dalam mengambil data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    const storedData = localStorage.getItem("summaryData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      setSummaryData({
+        notes: processMarkdown(parsedData.notes),
+        quiz: processMarkdown(parsedData.quiz),
+      });
+    }
   }, []);
+
+  // Fungsi untuk memproses Markdown menjadi format per section
+  const processMarkdown = (data: string) => {
+    const sections: Record<string, string> = {};
+    let currentSection = "";
+
+    data.split("\n").forEach((line) => {
+      if (line.startsWith("### ")) {
+        currentSection = line.replace("### ", "").trim();
+        sections[currentSection] = "";
+      } else if (currentSection) {
+        sections[currentSection] += line + "\n";
+      }
+    });
+
+    return sections;
+  };
 
   return (
     <>
       <Navbar />
       <div className="container mx-auto p-4 md:p-6 pt-24 pb-24 space-y-6">
-        {loading ? (
-          <p className="text-center text-white">🔄 Memuat data...</p>
-        ) : error ? (
-          <p className="text-center text-red-500">{error}</p>
-        ) : summaryData ? (
+        {summaryData ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {/* Sidebar - Ringkasan Materi */}
+            {/* Sidebar - Pilihan Section */}
             <div className="col-span-1">
               <h2 className="text-2xl md:text-3xl font-bold text-primary-light mb-3">
-                Ringkasan
+                Ringkasan / Kuis
               </h2>
               <div className="bg-[#2C2638] p-6 rounded-xl shadow-lg text-white">
-                <ReactMarkdown className="prose prose-invert">
-                  {summaryData.notes}
-                </ReactMarkdown>
+                <h3 className="text-lg font-semibold mb-3">Pilih Section:</h3>
+                <div className="space-y-2">
+                  {Object.keys(summaryData.notes).map((section) => (
+                    <button
+                      key={section}
+                      onClick={() => setSelectedSection(section)}
+                      className={`w-full text-left py-3 px-4 rounded-lg text-sm font-medium transition ${
+                        selectedSection === section
+                          ? "bg-[#6F41FF] text-white"
+                          : "bg-[#3E2C5D] text-gray-300 hover:bg-[#6F41FF] hover:text-white"
+                      }`}
+                    >
+                      {section}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Flashcard */}
-            <div className="col-span-1 md:col-span-2">
-              <Flashcard
-                type="summary"
-                summaryTitle="Flashcards"
-                summaryContent={summaryData.flashcards}
-              />
+            {/* Flashcard Global untuk Ringkasan & Kuis */}
+            <div className="col-span-2">
+              {selectedSection ? (
+                <Flashcard
+                  type={viewType}
+                  summaryTitle={selectedSection}
+                  summaryContent={
+                    viewType === "summary"
+                      ? summaryData.notes[selectedSection] || ""
+                      : summaryData.quiz[selectedSection] || "Tidak ada kuis untuk bagian ini."
+                  }
+                  onSwitch={() =>
+                    setViewType(viewType === "summary" ? "quiz" : "summary")
+                  }
+                />
+              ) : (
+                <p className="text-gray-400 text-center">
+                  Pilih section untuk melihat {viewType === "summary" ? "ringkasan" : "kuis"}.
+                </p>
+              )}
             </div>
           </div>
         ) : (
