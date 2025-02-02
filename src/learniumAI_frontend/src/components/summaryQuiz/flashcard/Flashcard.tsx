@@ -23,10 +23,9 @@ const Flashcard: React.FC<FlashcardProps> = (props) => {
 
         {/* Flashcard Header */}
         <div className="relative bg-gradient-to-r from-[#D2C4FF] to-[#6F41FF] p-4 md:p-6 rounded-xl shadow-md flex items-center justify-between">
-          <span className="text-[#1E1A29] font-semibold text-sm md:text-lg">
+          <span className="text-primary-dark font-semibold text-sm md:text-lg">
             Pengertian Waterfall Model?
           </span>
-          <div className="w-10 h-10 md:w-14 md:h-14 bg-[url('/path-to-stars-icon.svg')] bg-cover opacity-40"></div>
         </div>
 
         {/* Tombol Kembali */}
