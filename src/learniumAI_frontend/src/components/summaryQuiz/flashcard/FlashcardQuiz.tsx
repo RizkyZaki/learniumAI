@@ -7,6 +7,7 @@ interface FlashcardQuizProps {
   onSelectAnswer: (isCorrect: boolean) => void;
 }
 
+// Di dalam FlashcardQuiz
 const FlashcardQuiz: React.FC<FlashcardQuizProps> = ({
   question,
   options,

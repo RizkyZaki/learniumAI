@@ -8,6 +8,7 @@ interface FlashcardProps {
   type: "summary" | "quiz";
   summaryTitle: string;
   summaryContent: string;
+  quizData: { question: string; options: string[]; correctAnswer: string }[];
   onSwitch: () => void;
 }
 
@@ -18,6 +19,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
 }) => {
   const [currentType, setCurrentType] = useState<"summary" | "quiz">(type);
   const [quizData, setQuizData] = useState<Record<string, string>>({});
+  console.log("📌 Data Quiz yang diterima di Flashcard.tsx:", quizData); // 🔍 Debugging
 
   useEffect(() => {
     // Ambil data kuis dari localStorage
@@ -81,7 +83,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
           ) : quizData[summaryTitle] ? (
             <FlashcardQuiz
               question={quizData[summaryTitle]}
-              options={[]} // Nanti bisa diubah ke list pilihan jawaban dari markdown
+              options={[]}
               correctAnswer=""
               onSelectAnswer={() => {}}
             />
