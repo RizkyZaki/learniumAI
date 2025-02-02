@@ -30,6 +30,7 @@ const UploadSection = () => {
   const [extractedContent, setExtractedContent] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
+
   const handleFileUpload = async (files: File[]) => {
     const file = files[0];
     const newFile = {
@@ -48,10 +49,14 @@ const UploadSection = () => {
           return { ...prev, progress: prev.progress + 10 };
         } else {
           clearInterval(interval);
-          setUploadedFiles((prevFiles) => [
-            ...prevFiles,
-            { ...newFile, progress: 100 },
-          ]);
+          setUploadedFiles((prevFiles) => {
+            const updatedFiles = [...prevFiles, { ...newFile, progress: 100 }];
+            localStorage.setItem(
+              "recentChapters",
+              JSON.stringify(updatedFiles)
+            ); // Simpan ke LocalStorage
+            return updatedFiles;
+          });
           setUploadingFile(null);
           setIsUploading(false);
           return null;

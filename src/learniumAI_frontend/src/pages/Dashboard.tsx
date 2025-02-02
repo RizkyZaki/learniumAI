@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RecentChapters from "../components/dashboard/RecentChapters";
 import UploadSection from "../components/dashboard/uploadSection/UploadSection";
 import Footer from "../components/Footer";
@@ -8,18 +8,23 @@ import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
   const { principal } = useAuth();
-  const [chapters, setChapters] = useState([
-    { name: "Contoh Materi 1.pdf", size: "5.3MB" },
-    { name: "Contoh Materi 2.pdf", size: "5.3MB" },
-    { name: "Contoh Materi 3.pdf", size: "5.3MB" },
-    { name: "Contoh Materi 4.pdf", size: "5.3MB" },
-    { name: "Contoh Materi 5.pdf", size: "5.3MB" },
-  ]);
+  const [chapters, setChapters] = useState<
+    { name: string; size: string; data: string }[]
+  >([]);
+
+  useEffect(() => {
+    const storedChapters = localStorage.getItem("recentChapters");
+    if (storedChapters) {
+      setChapters(JSON.parse(storedChapters));
+    }
+  }, []);
 
   const handleRemoveChapter = (chapterName: string) => {
-    setChapters((prevChapters) =>
-      prevChapters.filter((chapter) => chapter.name !== chapterName)
+    const updatedChapters = chapters.filter(
+      (chapter) => chapter.name !== chapterName
     );
+    setChapters(updatedChapters);
+    localStorage.setItem("recentChapters", JSON.stringify(updatedChapters));
   };
 
   return (

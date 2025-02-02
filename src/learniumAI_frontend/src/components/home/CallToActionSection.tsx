@@ -1,7 +1,17 @@
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function CallToActionSection() {
-  const { login } = useAuth();
+  const { isAuthenticated, login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    } else {
+      login();
+    }
+  };
 
   return (
     <section className="py-20 text-center text-white bg-[#0C0B27]">
@@ -22,7 +32,7 @@ export default function CallToActionSection() {
 
         {/* Button */}
         <button
-          onClick={login}
+          onClick={handleGetStarted}
           className="mt-6 bg-gradient-to-r from-[#FB928E] to-[#6F41FF] text-white px-6 py-3 rounded-2xl shadow-lg hover:opacity-90 text-base md:text-lg flex items-center justify-center ml-auto mr-auto"
         >
           Get Started
