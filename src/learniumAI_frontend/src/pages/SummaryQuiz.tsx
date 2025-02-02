@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import SummaryList from "../components/summaryQuiz/summarySection/SummaryList";
 import Flashcard from "../components/summaryQuiz/flashcard/Flashcard";
 
 const SummaryQuiz: React.FC = () => {
   const [summaryData, setSummaryData] = useState<{
     notes: Record<string, string>;
-    quiz: Record<string, string>;
+    quiz: Record<
+      string,
+      { question: string; options: string[]; correctAnswer: string }[]
+    >;
   } | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [viewType, setViewType] = useState<"summary" | "quiz">("summary");
@@ -16,14 +18,19 @@ const SummaryQuiz: React.FC = () => {
     const storedData = localStorage.getItem("summaryData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
+      const processedQuiz = processQuizMarkdown(parsedData.quiz);
+      const processedNotes = processMarkdown(parsedData.notes);
+
+      console.log("📌 Data Quiz dari LocalStorage:", processedQuiz); // 🔍 Debugging
+
       setSummaryData({
-        notes: processMarkdown(parsedData.notes),
-        quiz: processMarkdown(parsedData.quiz),
+        notes: processedNotes,
+        quiz: processedQuiz,
       });
     }
   }, []);
 
-  // Fungsi untuk memproses Markdown menjadi format per section
+  // Fungsi untuk memproses Markdown menjadi format per section untuk Ringkasan
   const processMarkdown = (data: string) => {
     const sections: Record<string, string> = {};
     let currentSection = "";
@@ -38,6 +45,85 @@ const SummaryQuiz: React.FC = () => {
     });
 
     return sections;
+  };
+
+  // Fungsi untuk memproses Markdown menjadi format array pertanyaan untuk Kuis
+
+  const processQuizMarkdown = (data: string) => {
+    const quizSections: Record<
+      string,
+      { question: string; options: string[]; correctAnswer: string }[]
+    > = {};
+
+    let currentSection = "";
+    let currentQuestion = "";
+    let options: string[] = [];
+    let correctAnswer = "";
+
+    data.split("\n").forEach((line) => {
+      if (line.startsWith("### ")) {
+        // Simpan pertanyaan sebelumnya sebelum pindah ke section baru
+        if (currentSection && currentQuestion) {
+          quizSections[currentSection].push({
+            question: currentQuestion,
+            options,
+            correctAnswer,
+          });
+        }
+
+        // Buat section baru jika belum ada
+        currentSection = line.replace("### ", "").trim();
+        if (!quizSections[currentSection]) {
+          quizSections[currentSection] = [];
+        }
+
+        // Reset variabel untuk pertanyaan baru
+        currentQuestion = "";
+        options = [];
+        correctAnswer = "";
+      } else if (line.startsWith("- Q: ")) {
+        // Simpan pertanyaan sebelumnya sebelum pindah ke pertanyaan baru
+        if (currentQuestion) {
+          quizSections[currentSection].push({
+            question: currentQuestion,
+            options,
+            correctAnswer,
+          });
+        }
+
+        // Atur pertanyaan baru
+        currentQuestion = line.replace("- Q: ", "").trim();
+        options = [];
+        correctAnswer = "";
+      } else if (line.match(/- [A-D]: /)) {
+        const answerText = line.replace(/- [A-D]: /, "").trim();
+        const isCorrect = line.includes("(correct)");
+
+        // Hanya tambahkan teks yang bersih ke opsi
+        const cleanedOption = answerText
+          .replace("(correct)", "")
+          .replace("(incorrect)", "")
+          .trim();
+        options.push(cleanedOption);
+
+        // Simpan jawaban benar
+        if (isCorrect) {
+          correctAnswer = cleanedOption;
+        }
+      }
+    });
+
+    // Simpan pertanyaan terakhir jika ada
+    if (currentSection && currentQuestion) {
+      quizSections[currentSection].push({
+        question: currentQuestion,
+        options,
+        correctAnswer,
+      });
+    }
+
+    console.log("📌 Data Quiz setelah diproses:", quizSections); // 🔍 Debugging
+    return quizSections;
   };
 
   return (
@@ -80,7 +166,12 @@ const SummaryQuiz: React.FC = () => {
                   summaryContent={
                     viewType === "summary"
                       ? summaryData.notes[selectedSection] || ""
-                      : summaryData.quiz[selectedSection] || "Tidak ada kuis untuk bagian ini."
+                      : ""
+                  }
+                  quizData={
+                    viewType === "quiz"
+                      ? summaryData.quiz[selectedSection] || []
+                      : []
                   }
                   onSwitch={() =>
                     setViewType(viewType === "summary" ? "quiz" : "summary")
@@ -88,7 +179,8 @@ const SummaryQuiz: React.FC = () => {
                 />
               ) : (
                 <p className="text-gray-400 text-center">
-                  Pilih section untuk melihat {viewType === "summary" ? "ringkasan" : "kuis"}.
+                  Pilih section untuk melihat{" "}
+                  {viewType === "summary" ? "ringkasan" : "kuis"}.
                 </p>
               )}
             </div>
