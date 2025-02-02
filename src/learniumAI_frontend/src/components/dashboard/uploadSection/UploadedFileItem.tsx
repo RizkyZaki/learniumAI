@@ -78,7 +78,7 @@ const UploadedFileItem: React.FC<UploadedFileItemProps> = ({
       </div>
 
       {/* Tombol Generate Result */}
-      <div className="mt-4 flex">
+      {/* <div className="mt-4 flex">
         <button
           onClick={handleSeeResult}
           disabled={isUploading || isProcessing}
@@ -94,7 +94,7 @@ const UploadedFileItem: React.FC<UploadedFileItemProps> = ({
             "See Result"
           )}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
