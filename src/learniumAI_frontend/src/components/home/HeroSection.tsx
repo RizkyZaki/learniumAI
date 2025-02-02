@@ -1,4 +1,8 @@
+import { useAuth } from "../../context/AuthContext";
+
 export default function HeroSection() {
+  const { login } = useAuth();
+
   return (
     <section
       id="home"
@@ -14,7 +18,10 @@ export default function HeroSection() {
           {"\n"}
           membantu Anda menguasai pemahaman.
         </p>
-        <button className="mt-6 bg-gradient-to-r from-[#FB928E] to-[#6F41FF] text-white px-6 py-3 rounded-2xl shadow-lg hover:opacity-90 text-base md:text-lg flex items-center justify-center ml-auto mr-auto">
+        <button
+          onClick={login}
+          className="mt-6 bg-gradient-to-r from-[#FB928E] to-[#6F41FF] text-white px-6 py-3 rounded-2xl shadow-lg hover:opacity-90 text-base md:text-lg flex items-center justify-center ml-auto mr-auto"
+        >
           Get Started
           <img
             src="/assets/logo/arrow.png"
