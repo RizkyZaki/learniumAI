@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import * as pdfjs from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
+import ReactLoading from "react-loading"; // Import react-loading
 
 // Konfigurasi workerSrc untuk pdfjs-dist
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -190,6 +191,13 @@ const UploadSection = () => {
 
       <p className="text-gray-light mt-2 text-sm">Format yang didukung: .pdf</p>
 
+      {/* Overlay Loading saat Upload atau Processing */}
+      {(isUploading || isProcessing) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center ">
+          <ReactLoading type="spin" color="#F1ECFF" height={50} width={50} />
+        </div>
+      )}
+
       <div className="mt-4 space-y-2">
         {uploadedFiles.map((file) => (
           <UploadedFileItem
@@ -202,6 +210,8 @@ const UploadSection = () => {
           />
         ))}
       </div>
+
+      {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
     </section>
   );
 };
