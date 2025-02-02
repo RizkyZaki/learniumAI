@@ -20,8 +20,8 @@ export default function Footer() {
             </Link>
           </div>
 
-          {/* Navigation Links */}
-          <ul className="flex flex-wrap justify-center space-x-6 md:space-x-8">
+          {/* Navigation Links (Hanya tampil di tablet dan desktop) */}
+          <ul className="hidden md:flex flex-wrap justify-center space-x-6 md:space-x-8">
             <li className="hover:text-gray-400">
               <a href="#home">Home</a>
             </li>
