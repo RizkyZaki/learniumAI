@@ -129,7 +129,7 @@ const SummaryQuiz: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto p-4 md:p-6 pt-24 pb-24 space-y-6">
+      <div className="container mx-auto p-4 md:p-6 pt-24 pb-24 space-y-6 md:mt-40 md:mb-40 mt-0 mb-0">
         {summaryData ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {/* Sidebar - Pilihan Section */}
