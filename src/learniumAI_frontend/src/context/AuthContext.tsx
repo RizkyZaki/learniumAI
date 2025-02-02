@@ -11,12 +11,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [authClient, setAuthClient] = useState<AuthClient | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [principal, setPrincipal] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("isAuthenticated") === "true"
+  );
+  const [principal, setPrincipal] = useState<string | null>(
+    localStorage.getItem("principal")
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,11 +26,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const client = await AuthClient.create();
       setAuthClient(client);
       const authenticated = await client.isAuthenticated();
-      setIsAuthenticated(authenticated);
 
       if (authenticated) {
         const identity = client.getIdentity();
-        setPrincipal(identity.getPrincipal().toText());
+        const principalId = identity.getPrincipal().toText();
+
+        setIsAuthenticated(true);
+        setPrincipal(principalId);
+
+        // Simpan status ke LocalStorage
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("principal", principalId);
+      } else {
+        setIsAuthenticated(false);
+        setPrincipal(null);
+
+        // Hapus dari LocalStorage jika tidak autentikasi
+        localStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("principal");
       }
     };
 
@@ -40,12 +55,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     await authClient.login({
       identityProvider: "https://identity.ic0.app",
-      onSuccess: () => {
-        setIsAuthenticated(true);
+      onSuccess: async () => {
         const identity = authClient.getIdentity();
-        setPrincipal(identity.getPrincipal().toText());
+        const principalId = identity.getPrincipal().toText();
 
-        // Redirect to dashboard after login
+        setIsAuthenticated(true);
+        setPrincipal(principalId);
+
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("principal", principalId);
+
         navigate("/dashboard");
       },
     });
@@ -58,7 +77,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsAuthenticated(false);
     setPrincipal(null);
 
-    // Optional: Redirect to home after logout
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("principal");
+
     navigate("/");
   };
 
