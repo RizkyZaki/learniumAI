@@ -2,11 +2,10 @@ import { useState } from "react";
 import FileDropZone from "./FileDropZone";
 import UploadProgress from "./UploadProgress";
 import UploadedFileItem from "./UploadedFileItem";
-import { generateEducationalContent } from "../../../services/llmService";
-import * as pdfjs from "pdfjs-dist";
-import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import * as pdfjs from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker?url";
 
 // Konfigurasi workerSrc untuk pdfjs-dist
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -33,6 +32,9 @@ const UploadSection = () => {
 
   const handleFileUpload = async (files: File[]) => {
     const file = files[0];
+
+    console.log("📂 File yang diunggah:", file);
+
     const newFile = {
       name: file.name,
       size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
@@ -66,15 +68,19 @@ const UploadSection = () => {
 
     // Ekstrak teks dari PDF setelah selesai diunggah
     const extractedText = await extractTextFromPDF(file);
+    console.log("📄 Hasil ekstraksi teks dari PDF:", extractedText);
     setExtractedContent(extractedText);
 
     // Kirim teks ke LLM untuk diproses
     if (extractedText) {
       try {
-        setIsProcessing(true); // Menetapkan status sebagai processing saat mulai
+        setIsProcessing(true);
         const formData = new FormData();
         formData.append("content", extractedText);
         formData.append("file", file);
+
+        console.log("📤 Mengirim teks ke API...");
+        console.log("📝 Data yang dikirim:", extractedText);
 
         const response = await axios.post(
           "https://frisjjj.pythonanywhere.com/analyze",
@@ -86,8 +92,16 @@ const UploadSection = () => {
           }
         );
 
+        console.log("✅ Response dari API:", response.data);
+
         if (response.status === 200) {
           const result = response.data;
+
+          console.log("🛠️ Data hasil dari API:", result);
+
+          // Simpan hasil ke localStorage
+          localStorage.setItem("summaryData", JSON.stringify(result));
+
           // Update state uploadedFiles dengan hasil
           setUploadedFiles((prevFiles) =>
             prevFiles.map((uploadedFile) =>
@@ -96,6 +110,7 @@ const UploadSection = () => {
                 : uploadedFile
             )
           );
+
           navigate("/summary-quiz", {
             state: { flashcards: result.flashcards },
           });
@@ -103,16 +118,18 @@ const UploadSection = () => {
           throw new Error("Gagal mendapatkan hasil");
         }
       } catch (error) {
-        console.error("Error posting to API:", error);
+        console.error("❌ Error posting to API:", error);
         setErrorMessage("Terjadi kesalahan dalam proses analisis.");
       } finally {
-        setIsProcessing(false); // Mengubah status menjadi false setelah selesai
+        setIsProcessing(false);
       }
     }
   };
 
   // Fungsi ekstraksi teks dari PDF menggunakan pdfjs-dist
   const extractTextFromPDF = async (file: File): Promise<string> => {
+    console.log("📥 Mulai ekstraksi teks dari PDF...");
+
     const reader = new FileReader();
 
     return new Promise((resolve, reject) => {
@@ -121,10 +138,9 @@ const UploadSection = () => {
           const typedArray = new Uint8Array(
             event.target?.result as ArrayBuffer
           );
-          console.log("PDF Loaded, Extracting Text...");
-
           const pdf = await pdfjs.getDocument({ data: typedArray }).promise;
-          console.log(`PDF memiliki ${pdf.numPages} halaman.`);
+
+          console.log("📜 Jumlah halaman PDF:", pdf.numPages);
 
           let extractedText = "";
           for (let i = 1; i <= pdf.numPages; i++) {
@@ -134,15 +150,16 @@ const UploadSection = () => {
             const pageText = textContent.items
               .map((item) => (item as any).str)
               .join(" ");
-            console.log(`Halaman ${i} Ekstrak:`, pageText);
+
+            console.log(`📄 Teks halaman ${i}:`, pageText);
 
             extractedText += pageText + "\n";
           }
 
-          console.log("Final Extracted Text:", extractedText);
+          console.log("✅ Final Extracted Text:", extractedText);
           resolve(extractedText);
         } catch (error) {
-          console.error("Error extracting text from PDF:", error);
+          console.error("❌ Error extracting text from PDF:", error);
           reject(error);
         }
       };
@@ -175,7 +192,7 @@ const UploadSection = () => {
             onRemove={() => {}}
             isUploading={isUploading}
             isProcessing={isProcessing}
-            showResult={file.result !== undefined} // Menambahkan kondisi showResult
+            showResult={file.result !== undefined}
           />
         ))}
       </div>
