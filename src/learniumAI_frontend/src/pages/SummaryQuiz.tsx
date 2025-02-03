@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Flashcard from "../components/summaryQuiz/flashcard/Flashcard";
+import { useNavigate } from "react-router-dom";
 
 const SummaryQuiz: React.FC = () => {
+  const navigate = useNavigate();
   const [summaryData, setSummaryData] = useState<{
     notes: Record<string, string>;
     flashcard: Record<string, string>;
@@ -147,6 +149,12 @@ const SummaryQuiz: React.FC = () => {
     <>
       <Navbar />
       <div className="container mx-auto p-4 md:p-6 pt-24 pb-24 space-y-6 md:mt-40 md:mb-40">
+        <button
+          className="bg-gradient-to-r from-[#FB928E] to-[#6F41FF] text-white px-6 py-3 rounded-full shadow-md hover:opacity-90"
+          onClick={() => navigate("/dashboard")}
+        >
+          Back
+        </button>
         {summaryData ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className="col-span-1">
