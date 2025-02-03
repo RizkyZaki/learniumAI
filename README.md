@@ -6,7 +6,7 @@ LearniumAI is a web-based platform that revolutionizes the learning experience b
 
 ## 📺 LearniumAI Demo
 
-Demo Video: [Youtube]()
+Demo Video: [Youtube](https://youtu.be/ePsqfiSq13c)
 
 ---
 
