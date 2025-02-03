@@ -5,7 +5,7 @@ import Flashcard from "../components/summaryQuiz/flashcard/Flashcard";
 
 const SummaryQuiz: React.FC = () => {
   const [summaryData, setSummaryData] = useState<{
-    notes: string;
+    notes: Record<string, string>;
     flashcard: Record<string, string>;
     quiz: Record<
       string,
@@ -13,7 +13,7 @@ const SummaryQuiz: React.FC = () => {
     >;
   } | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
-  const [viewType, setViewType] = useState<"summary" | "quiz">("summary");
+  const [viewType, setViewType] = useState<"summary" | "notes">("summary");
 
   useEffect(() => {
     const storedData = localStorage.getItem("summaryData");
@@ -22,12 +22,21 @@ const SummaryQuiz: React.FC = () => {
 
       const processedQuiz = processQuizMarkdown(parsedData.quiz);
       const processedFlashcards = processMarkdown(parsedData.flashcards);
+      const processedNotes = processMarkdown(parsedData.notes);
 
       setSummaryData({
-        notes: parsedData.notes,
+        notes: processedNotes,
         flashcard: processedFlashcards,
         quiz: processedQuiz,
       });
+
+      // Pastikan memilih section pertama yang tersedia
+      const firstSection =
+        Object.keys(processedFlashcards)[0] || Object.keys(processedNotes)[0];
+      if (firstSection) {
+        console.log("Setting default selectedSection:", firstSection);
+        setSelectedSection(firstSection);
+      }
     }
   }, []);
 
@@ -103,6 +112,37 @@ const SummaryQuiz: React.FC = () => {
     return quizSections;
   };
 
+  // Fungsi untuk switch viewType dengan memastikan selectedSection valid
+  const handleSwitchViewType = () => {
+    setViewType((prev) => {
+      const newViewType = prev === "summary" ? "notes" : "summary";
+
+      if (summaryData) {
+        let validSection = selectedSection;
+
+        if (newViewType === "notes") {
+          if (!summaryData.notes[selectedSection!]) {
+            validSection = Object.keys(summaryData.notes)[0] || null;
+          }
+        } else {
+          if (!summaryData.flashcard[selectedSection!]) {
+            validSection = Object.keys(summaryData.flashcard)[0] || null;
+          }
+        }
+
+        console.log(
+          `📌 Switching to ${newViewType} with section:`,
+          validSection
+        );
+        console.log(`📌 Notes Data:`, summaryData.notes[validSection!]);
+
+        setSelectedSection(validSection);
+      }
+
+      return newViewType;
+    });
+  };
+
   return (
     <>
       <Navbar />
@@ -111,12 +151,16 @@ const SummaryQuiz: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className="col-span-1">
               <h2 className="text-2xl md:text-3xl font-bold text-primary-light mb-3">
-                Ringkasan / Kuis
+                Section
               </h2>
               <div className="bg-[#2C2638] p-6 rounded-xl shadow-lg text-white">
                 <h3 className="text-lg font-semibold mb-3">Pilih Section:</h3>
                 <div className="space-y-2">
-                  {Object.keys(summaryData.flashcard).map((section) => (
+                  {Object.keys(
+                    viewType === "summary"
+                      ? summaryData.flashcard
+                      : summaryData.notes
+                  ).map((section) => (
                     <button
                       key={section}
                       onClick={() => setSelectedSection(section)}
@@ -143,20 +187,17 @@ const SummaryQuiz: React.FC = () => {
                       ? `${summaryData.flashcard[selectedSection] || ""}`
                       : ""
                   }
-                  notesContent={summaryData.notes}
-                  quizData={
-                    viewType === "quiz"
-                      ? summaryData.quiz[selectedSection] || []
-                      : []
+                  notesContent={
+                    viewType === "notes"
+                      ? summaryData.notes[selectedSection] || ""
+                      : ""
                   }
-                  onSwitch={() =>
-                    setViewType(viewType === "summary" ? "quiz" : "summary")
-                  }
+                  onSwitch={handleSwitchViewType}
                 />
               ) : (
                 <p className="text-gray-400 text-center">
                   Pilih section untuk melihat{" "}
-                  {viewType === "summary" ? "ringkasan" : "kuis"}.
+                  {viewType === "summary" ? "ringkasan" : "notes"}.
                 </p>
               )}
             </div>

@@ -6,11 +6,11 @@ import ReactMarkdown from "react-markdown";
 import FlashcardNotes from "./FlashcardNotes";
 
 interface FlashcardProps {
-  type: "summary" | "quiz";
+  type: "summary" | "notes";
   summaryTitle: string;
   summaryContent: string;
   notesContent: string;
-  quizData: { question: string; options: string[]; correctAnswer: string }[];
+  // quizData: { question: string; options: string[]; correctAnswer: string }[];
   onSwitch: () => void;
 }
 
@@ -19,10 +19,20 @@ const Flashcard: React.FC<FlashcardProps> = ({
   summaryTitle,
   summaryContent,
   notesContent,
+  onSwitch,
 }) => {
-  const [currentType, setCurrentType] = useState<"summary" | "quiz">(type);
+  useEffect(() => {
+    console.log("📌 Flashcard Component Props Updated:", {
+      type,
+      summaryTitle,
+      summaryContent,
+      notesContent,
+    });
+  }, [type, summaryTitle, summaryContent, notesContent]);
+
+  const [currentType, setCurrentType] = useState<"summary" | "notes">(type);
   const [quizData, setQuizData] = useState<Record<string, string>>({});
-  console.log("📌 Data Quiz yang diterima di Flashcard.tsx:", quizData); // 🔍 Debugging
+  // console.log("📌 Data Quiz yang diterima di Flashcard.tsx:", quizData); // 🔍 Debugging
 
   useEffect(() => {
     // Ambil data kuis dari localStorage
@@ -56,47 +66,32 @@ const Flashcard: React.FC<FlashcardProps> = ({
       <div className="bg-[#2C2638] p-6 md:p-8 lg:p-10 rounded-2xl shadow-lg text-white">
         {/* Header Flashcards */}
         <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-          Flashcards
+          {type === "summary" ? "Flashcards" : "Notes"}
         </h2>
 
         {/* Flashcard Header */}
         <div className="relative bg-gradient-to-r from-[#D2C4FF] to-[#6F41FF] p-4 md:p-6 rounded-xl shadow-md flex items-center justify-between">
           <span className="text-primary-dark font-semibold text-sm md:text-lg">
-            {currentType === "summary" ? "Ringkasan Materi" : "Kuis"}
+            {summaryTitle}
           </span>
         </div>
 
-        {/* Tombol Switch Ringkasan <-> Kuis */}
+        {/* Tombol Switch Ringkasan <-> Notes */}
         <button
-          onClick={() =>
-            setCurrentType(currentType === "summary" ? "quiz" : "summary")
-          }
+          onClick={onSwitch}
           className="mt-4 flex items-center justify-center bg-[#6F41FF] text-white text-xs md:text-sm font-medium hover:bg-opacity-90 py-2 px-6 md:px-8 rounded-lg transition"
         >
-          {currentType === "summary" ? "Kerjakan Kuis" : "Lihat Ringkasan"}
+          {type === "summary" ? "Lihat Notes" : "Lihat Flashcards"}
         </button>
 
         {/* Flashcard Content */}
         <div className="mt-6">
-          {currentType === "summary" ? (
+          {type === "summary" ? (
             <>
-              <FlashcardSummary
-                summaryTitle={summaryTitle}
-                summaryContent={summaryContent}
-              />
-              <FlashcardNotes notesContent={notesContent} />
+              <FlashcardSummary summaryContent={summaryContent} />
             </>
-          ) : quizData[summaryTitle] ? (
-            <FlashcardQuiz
-              question={quizData[summaryTitle]}
-              options={[]}
-              correctAnswer=""
-              onSelectAnswer={() => {}}
-            />
           ) : (
-            <p className="text-gray-300">
-              Tidak ada data kuis untuk bagian ini.
-            </p>
+            <FlashcardNotes notesContent={notesContent} />
           )}
         </div>
 
