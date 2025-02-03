@@ -3,11 +3,13 @@ import FlashcardSummary from "./FlashcardSummary";
 import FlashcardQuiz from "./FlashcardQuiz";
 import ProgressCard from "./ProgressCard";
 import ReactMarkdown from "react-markdown";
+import FlashcardNotes from "./FlashcardNotes";
 
 interface FlashcardProps {
   type: "summary" | "quiz";
   summaryTitle: string;
   summaryContent: string;
+  notesContent: string;
   quizData: { question: string; options: string[]; correctAnswer: string }[];
   onSwitch: () => void;
 }
@@ -16,6 +18,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
   type,
   summaryTitle,
   summaryContent,
+  notesContent,
 }) => {
   const [currentType, setCurrentType] = useState<"summary" | "quiz">(type);
   const [quizData, setQuizData] = useState<Record<string, string>>({});
@@ -76,10 +79,13 @@ const Flashcard: React.FC<FlashcardProps> = ({
         {/* Flashcard Content */}
         <div className="mt-6">
           {currentType === "summary" ? (
-            <FlashcardSummary
-              summaryTitle={summaryTitle}
-              summaryContent={summaryContent}
-            />
+            <>
+              <FlashcardSummary
+                summaryTitle={summaryTitle}
+                summaryContent={summaryContent}
+              />
+              <FlashcardNotes notesContent={notesContent} />
+            </>
           ) : quizData[summaryTitle] ? (
             <FlashcardQuiz
               question={quizData[summaryTitle]}

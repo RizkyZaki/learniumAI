@@ -5,7 +5,8 @@ import Flashcard from "../components/summaryQuiz/flashcard/Flashcard";
 
 const SummaryQuiz: React.FC = () => {
   const [summaryData, setSummaryData] = useState<{
-    notes: Record<string, string>;
+    notes: string;
+    flashcard: Record<string, string>;
     quiz: Record<
       string,
       { question: string; options: string[]; correctAnswer: string }[]
@@ -18,19 +19,18 @@ const SummaryQuiz: React.FC = () => {
     const storedData = localStorage.getItem("summaryData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
-      const processedQuiz = processQuizMarkdown(parsedData.quiz);
-      const processedNotes = processMarkdown(parsedData.notes);
 
-      console.log("📌 Data Quiz dari LocalStorage:", processedQuiz); // 🔍 Debugging
+      const processedQuiz = processQuizMarkdown(parsedData.quiz);
+      const processedFlashcards = processMarkdown(parsedData.flashcards);
 
       setSummaryData({
-        notes: processedNotes,
+        notes: parsedData.notes,
+        flashcard: processedFlashcards,
         quiz: processedQuiz,
       });
     }
   }, []);
 
-  // Fungsi untuk memproses Markdown menjadi format per section untuk Ringkasan
   const processMarkdown = (data: string) => {
     const sections: Record<string, string> = {};
     let currentSection = "";
@@ -47,8 +47,6 @@ const SummaryQuiz: React.FC = () => {
     return sections;
   };
 
-  // Fungsi untuk memproses Markdown menjadi format array pertanyaan untuk Kuis
-
   const processQuizMarkdown = (data: string) => {
     const quizSections: Record<
       string,
@@ -62,7 +60,6 @@ const SummaryQuiz: React.FC = () => {
 
     data.split("\n").forEach((line) => {
       if (line.startsWith("### ")) {
-        // Simpan pertanyaan sebelumnya sebelum pindah ke section baru
         if (currentSection && currentQuestion) {
           quizSections[currentSection].push({
             question: currentQuestion,
@@ -70,19 +67,12 @@ const SummaryQuiz: React.FC = () => {
             correctAnswer,
           });
         }
-
-        // Buat section baru jika belum ada
         currentSection = line.replace("### ", "").trim();
-        if (!quizSections[currentSection]) {
-          quizSections[currentSection] = [];
-        }
-
-        // Reset variabel untuk pertanyaan baru
+        quizSections[currentSection] = [];
         currentQuestion = "";
         options = [];
         correctAnswer = "";
       } else if (line.startsWith("- Q: ")) {
-        // Simpan pertanyaan sebelumnya sebelum pindah ke pertanyaan baru
         if (currentQuestion) {
           quizSections[currentSection].push({
             question: currentQuestion,
@@ -90,30 +80,18 @@ const SummaryQuiz: React.FC = () => {
             correctAnswer,
           });
         }
-
-        // Atur pertanyaan baru
         currentQuestion = line.replace("- Q: ", "").trim();
         options = [];
         correctAnswer = "";
       } else if (line.match(/- [A-D]: /)) {
         const answerText = line.replace(/- [A-D]: /, "").trim();
         const isCorrect = line.includes("(correct)");
-
-        // Hanya tambahkan teks yang bersih ke opsi
-        const cleanedOption = answerText
-          .replace("(correct)", "")
-          .replace("(incorrect)", "")
-          .trim();
+        const cleanedOption = answerText.replace("(correct)", "").trim();
         options.push(cleanedOption);
-
-        // Simpan jawaban benar
-        if (isCorrect) {
-          correctAnswer = cleanedOption;
-        }
+        if (isCorrect) correctAnswer = cleanedOption;
       }
     });
 
-    // Simpan pertanyaan terakhir jika ada
     if (currentSection && currentQuestion) {
       quizSections[currentSection].push({
         question: currentQuestion,
@@ -122,17 +100,15 @@ const SummaryQuiz: React.FC = () => {
       });
     }
 
-    console.log("📌 Data Quiz setelah diproses:", quizSections); // 🔍 Debugging
     return quizSections;
   };
 
   return (
     <>
       <Navbar />
-      <div className="container mx-auto p-4 md:p-6 pt-24 pb-24 space-y-6 md:mt-40 md:mb-40 mt-0 mb-0">
+      <div className="container mx-auto p-4 md:p-6 pt-24 pb-24 space-y-6 md:mt-40 md:mb-40">
         {summaryData ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {/* Sidebar - Pilihan Section */}
             <div className="col-span-1">
               <h2 className="text-2xl md:text-3xl font-bold text-primary-light mb-3">
                 Ringkasan / Kuis
@@ -140,7 +116,7 @@ const SummaryQuiz: React.FC = () => {
               <div className="bg-[#2C2638] p-6 rounded-xl shadow-lg text-white">
                 <h3 className="text-lg font-semibold mb-3">Pilih Section:</h3>
                 <div className="space-y-2">
-                  {Object.keys(summaryData.notes).map((section) => (
+                  {Object.keys(summaryData.flashcard).map((section) => (
                     <button
                       key={section}
                       onClick={() => setSelectedSection(section)}
@@ -157,7 +133,6 @@ const SummaryQuiz: React.FC = () => {
               </div>
             </div>
 
-            {/* Flashcard Global untuk Ringkasan & Kuis */}
             <div className="col-span-2">
               {selectedSection ? (
                 <Flashcard
@@ -165,9 +140,10 @@ const SummaryQuiz: React.FC = () => {
                   summaryTitle={selectedSection}
                   summaryContent={
                     viewType === "summary"
-                      ? summaryData.notes[selectedSection] || ""
+                      ? `${summaryData.flashcard[selectedSection] || ""}`
                       : ""
                   }
+                  notesContent={summaryData.notes}
                   quizData={
                     viewType === "quiz"
                       ? summaryData.quiz[selectedSection] || []
