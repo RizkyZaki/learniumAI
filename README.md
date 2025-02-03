@@ -4,20 +4,21 @@
 
 LearniumAI is a web-based platform that revolutionizes the learning experience by transforming educational materials into structured modules and interactive quizzes. By leveraging cutting-edge Web3 technology, LearniumAI ensures a more efficient, decentralized, and enjoyable learning process for users.
 
-## 📺 Resumid Demo
+## 📺 LearniumAI Demo
+
 Demo Video: [Youtube]()
 
 ---
 
 ## 🧑‍💻 Team
 
-| **Name** | **Role** |
-|---|---|
-| Muhammad Karov Ardava Barus | Lead, AI Engineer |
-| Casta Garneta | UI/UX Designer |
-| Rizky Zaki Zulkarnaen | Backend Developer |
-| Hauzan Rafi Attallah | Frontend Developer |
-| William Eka Chandra | AI Engineer |
+| **Name**                    | **Role**           |
+| --------------------------- | ------------------ |
+| Muhammad Karov Ardava Barus | Lead, AI Engineer  |
+| Casta Garneta               | UI/UX Designer     |
+| Rizky Zaki Zulkarnaen       | Backend Developer  |
+| Hauzan Rafi Attallah        | Frontend Developer |
+| William Eka Chandra         | AI Engineer        |
 
 ---
 
